@@ -6,7 +6,7 @@ BUILD_DIR := .build
 # Compiler and tools
 CC      := gcc
 AR      := ar
-CFLAGS  := -I${INCLUDE_DIR} -Wall -Wextra -Werror
+CFLAGS  := -I${INCLUDE_DIR} -Wall -Wextra -Werror -g3
 LDFLAGS := -shared -fPIC 
 
 # Library names
