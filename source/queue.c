@@ -58,7 +58,10 @@ void _queue_pop(queue* queue, void* result, char* typename)
     assert(compare_names(queue->typename, typename) && "Stack typenames mismatch");
     memcpy(result, queue->elements, queue->size_per_element);
     queue->top--;
-    memmove(queue->elements, queue->elements + 1, queue->top * queue->size_per_element);
+    if (queue->top > 0)
+    {
+        memmove(queue->elements, queue->elements + queue->size_per_element, queue->top * queue->size_per_element);
+    }
 }
 
 uint16_t _queue_size(const queue* const queue)
