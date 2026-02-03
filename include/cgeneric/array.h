@@ -24,8 +24,8 @@ typedef struct array array;
 #define ARRAY_CAPACITY(_ARRAY_ARRAY)_array_capacity(_ARRAY_ARRAY)
 #define ARRAY_FOR_EACH(_ARRAY_ARRAY, _ARRAY_FUNCTION){for (size_t index = 0; index < _array_capacity(_ARRAY_ARRAY); index++) _ARRAY_FUNCTION(_array_at(_ARRAY_ARRAY, index)); }
 
-array* _array_construct(uint16_t capacity, uint8_t size_per_element);
-void _array_init(array* ar, uint16_t capacity, uint8_t size_per_element);
+array* _array_construct(uint16_t capacity, uint16_t size_per_element);
+void _array_init(array* ar, uint16_t capacity, uint16_t size_per_element);
 void* _array_at(array* ar, uint16_t index);
 void _array_get(array* ar, uint16_t index, void* result);
 void _array_add(array* ar, uint16_t index, const void* data);   

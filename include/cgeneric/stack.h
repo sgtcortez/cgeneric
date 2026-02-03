@@ -16,8 +16,8 @@ typedef struct stack stack;
 #define STACK_PEEK(_STACK_STACK, _STACK_TYPE)({_STACK_TYPE tmp[1] = {0}; _stack_peek(_STACK_STACK, tmp, #_STACK_TYPE); *tmp;}) 
 
 
-stack* _stack_construct(uint16_t capacity, uint8_t element_size, char* typename);
-void _stack_init(stack* s, uint16_t capacity, uint8_t element_size, char* typename);
+stack* _stack_construct(uint16_t capacity, uint16_t element_size, char* typename);
+void _stack_init(stack* s, uint16_t capacity, uint16_t element_size, char* typename);
 bool _stack_push(stack* s, const void* const data, const char* typename);
 void _stack_destroy(stack** s);
 void _stack_pop(stack* s, void* result, const char* typename);

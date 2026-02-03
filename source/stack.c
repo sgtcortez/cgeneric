@@ -10,14 +10,14 @@ static bool compare_names(const char* left, const char* right);
 
 struct stack
 {
-    uint8_t size_per_element;
+    uint16_t size_per_element;
     uint16_t capacity;
     uint16_t top;
     char *typename;
     char elements[];
 };
 
-stack* _stack_construct(uint16_t capacity, uint8_t size_per_element, char *typename)
+stack* _stack_construct(uint16_t capacity, uint16_t size_per_element, char *typename)
 {
     const size_t required_size = sizeof(stack) + capacity * size_per_element;
     stack* q = malloc(required_size);
@@ -25,7 +25,7 @@ stack* _stack_construct(uint16_t capacity, uint8_t size_per_element, char *typen
     return q;
 }
 
-void _stack_init(stack *stack, uint16_t capacity, uint8_t size_per_element, char* typename)
+void _stack_init(stack *stack, uint16_t capacity, uint16_t size_per_element, char* typename)
 {
     stack->size_per_element = size_per_element;
     stack->capacity = capacity;

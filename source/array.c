@@ -12,7 +12,7 @@ struct array
     char elements[];
 };
 
-array* _array_construct(uint16_t capacity, uint8_t size_per_element)
+array* _array_construct(uint16_t capacity, uint16_t size_per_element)
 {   
     size_t required_size = sizeof(array) + capacity * size_per_element;
     array* ar = malloc(required_size);
@@ -20,7 +20,7 @@ array* _array_construct(uint16_t capacity, uint8_t size_per_element)
     return ar;
 }
 
-void _array_init(array *ar, uint16_t capacity, uint8_t size_per_element)
+void _array_init(array *ar, uint16_t capacity, uint16_t size_per_element)
 {
     ar->size_per_element = size_per_element;
     ar->capacity = capacity;

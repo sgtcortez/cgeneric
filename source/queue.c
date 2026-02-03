@@ -9,14 +9,14 @@ static bool compare_names(const char* left, const char* right);
 
 struct queue
 {
-    uint8_t size_per_element;
+    uint16_t size_per_element;
     uint16_t capacity;
     uint16_t top;
     char *typename;
     char elements[];
 };
 
-queue* _queue_construct(uint16_t capacity, uint8_t size_per_element, char* typename)
+queue* _queue_construct(uint16_t capacity, uint16_t size_per_element, char* typename)
 {
     const size_t required_size = sizeof(queue) + capacity * size_per_element;
     queue* q = malloc(required_size);
@@ -24,7 +24,7 @@ queue* _queue_construct(uint16_t capacity, uint8_t size_per_element, char* typen
     return q;
 }
 
-void _queue_init(queue *queue, uint16_t capacity, uint8_t size_per_element, char* typename)
+void _queue_init(queue *queue, uint16_t capacity, uint16_t size_per_element, char* typename)
 {
     queue->size_per_element = size_per_element;
     queue->capacity = capacity;

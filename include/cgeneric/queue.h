@@ -20,12 +20,12 @@ typedef struct queue queue;
  * Constructs a queue(allocates memory using default malloc)
  * Calle is the owner of the returned pointer
 */
-queue* _queue_construct(uint16_t capacity, uint8_t size_per_element, char* typename);
+queue* _queue_construct(uint16_t capacity, uint16_t size_per_element, char* typename);
 
 /**
  * Let the user allocate memory(this can be allocated on stack, heap, static) 
 */
-void _queue_init(queue* queue, uint16_t capacity, uint8_t size_per_element, char* typename);
+void _queue_init(queue* queue, uint16_t capacity, uint16_t size_per_element, char* typename);
 
 /**
  * Deallocate the memory using default free and set the pointer to null(0x00)
