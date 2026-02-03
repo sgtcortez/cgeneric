@@ -12,7 +12,7 @@ typedef struct queue queue;
 #define QUEUE_DESTROY(_QUEUE_QUEUE)_queue_destroy(&_QUEUE_QUEUE)
 #define QUEUE_POP(_QUEUE_QUEUE, _QUEUE_TYPE)({_QUEUE_TYPE tmp[1] = {0}; _queue_pop(_QUEUE_QUEUE, tmp, #_QUEUE_TYPE); *tmp; })
 #define QUEUE_SIZE(_QUEUE_QUEUE)_queue_size(_QUEUE_QUEUE)
-#define QUEUE_RESIZE(_QUEUE_QUEUE, _QUEUE_ELEMENTS)_array_resize(&_QUEUE_QUEUE, _QUEUE_ELEMENTS);
+#define QUEUE_RESIZE(_QUEUE_QUEUE, _QUEUE_ELEMENTS)_queue_resize(&_QUEUE_QUEUE, _QUEUE_ELEMENTS);
 #define QUEUE_PEEK(_QUEUE_QUEUE, _QUEUE_TYPE)({_QUEUE_TYPE tmp[1] = {0}; _queue_peek(_QUEUE_QUEUE, tmp, #_QUEUE_TYPE); *tmp;}) 
 
 
