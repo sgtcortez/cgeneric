@@ -1,19 +1,19 @@
 #include "cgeneric/stack.h"
 
+#include "cgeneric/hash.h"
+
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
-
-static bool compare_names(const char* left, const char* right);
-
 
 struct stack
 {
     uint16_t size_per_element;
     uint16_t capacity;
     uint16_t top;
-    char *typename;
+    uint32_t hash;
     char elements[];
 };
 
@@ -30,7 +30,7 @@ void _stack_init(stack *stack, uint16_t capacity, uint16_t size_per_element, cha
     stack->size_per_element = size_per_element;
     stack->capacity = capacity;
     stack->top = 0;
-    stack->typename = typename;
+    stack->hash = hash_djb2(typename);
     memset(stack->elements, 0, stack->size_per_element * stack->capacity);    
 }
 
@@ -42,7 +42,7 @@ void _stack_destroy(stack** stack)
 
 bool _stack_push(stack* stack, const void* const data, const char* typename)
 {
-    assert(compare_names(stack->typename, typename) && "Stack typenames mismatch");
+    assert(stack->hash == hash_djb2(typename) && "Stack typenames mismatch");
     if (stack->top == stack->capacity)
     {
         return false;
@@ -55,7 +55,7 @@ bool _stack_push(stack* stack, const void* const data, const char* typename)
 void _stack_pop(stack* stack, void* result, const char* typename)
 {
     assert(stack->top > 0 && "Stack is empty! Nothing to Pop!");
-    assert(compare_names(stack->typename, typename) && "Stack typenames mismatch");
+    assert(stack->hash == hash_djb2(typename) && "Stack typenames mismatch");
     stack->top--;
     memcpy(result, stack->elements + (stack->top * stack->size_per_element), stack->size_per_element);
 }
@@ -67,7 +67,8 @@ uint16_t _stack_size(const stack* const stack)
 
 void _stack_resize(stack** stack, uint16_t capacity)
 {   
-    struct stack* new_stack = _stack_construct(capacity, (*stack)->size_per_element, (*stack)->typename);
+    struct stack* new_stack = _stack_construct(capacity, (*stack)->size_per_element, NULL);
+    new_stack->hash = (*stack)->hash;
     memcpy(new_stack->elements, (*stack)->elements, (*stack)->size_per_element * capacity);
     _stack_destroy(stack);
     *stack = new_stack;
@@ -77,54 +78,6 @@ void _stack_resize(stack** stack, uint16_t capacity)
 void _stack_peek(stack* stack, void* result, const char* typename)
 {
     assert(stack->top > 0 && "Stack is empty! Nothing to peek!");
-    assert(compare_names(stack->typename, typename) && "Stack typenames mismatch");
+    assert(stack->hash == hash_djb2(typename) && "Stack typenames mismatch");
     memcpy(result, stack->elements + ((stack->top - 1) * stack->size_per_element), stack->size_per_element);
-}
-
-bool compare_names(const char* left, const char* right)
-{
-    if (left == right)
-    {
-        // same memory 
-        return true;
-    }
-    // compares character per character, ignoring whitespaces ...
-    // "operator*"" vs "operator *" are equal, cause they are handling the same data type.
-    while(true)
-    {
-        if (((*left) && !(*right)) || (!(*left) && (*right)))
-        {
-            return false;
-        }
-
-        if ((*left) == (*right))
-        {
-            if ((*left) == 0)
-            {
-                // reached the end of the string
-                // strings are equals
-                return true;
-            }
-            left++;
-            right++;
-            continue;
-        }
-
-        if ((*left) == ' ')
-        {
-            left++;
-            continue;
-        }
-        if ((*right) == ' ')
-        {
-            right++;
-            continue;
-        } 
-
-        if ((*left) != (*right))
-        {
-            return false;
-        }
-    }
-    return true;
 }

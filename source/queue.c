@@ -1,18 +1,17 @@
 #include "cgeneric/queue.h"
+#include "cgeneric/hash.h"
 
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
 
-static bool compare_names(const char* left, const char* right);
-
 struct queue
 {
     uint16_t size_per_element;
     uint16_t capacity;
     uint16_t top;
-    char *typename;
+    uint32_t hash;
     char elements[];
 };
 
@@ -29,7 +28,7 @@ void _queue_init(queue *queue, uint16_t capacity, uint16_t size_per_element, cha
     queue->size_per_element = size_per_element;
     queue->capacity = capacity;
     queue->top = 0;
-    queue->typename = typename;
+    queue->hash = hash_djb2(typename);
     memset(queue->elements, 0, queue->size_per_element * queue->capacity);    
 }
 
@@ -41,7 +40,7 @@ void _queue_destroy(queue** queue)
 
 bool _queue_push(queue* queue, const void* const data, char* typename)
 {
-    assert(compare_names(queue->typename, typename) && "Stack typenames mismatch");
+    assert(queue->hash == hash_djb2(typename) && "Queue typenames mismatch");
 
     if (queue->top == queue->capacity)
     {
@@ -55,7 +54,7 @@ bool _queue_push(queue* queue, const void* const data, char* typename)
 void _queue_pop(queue* queue, void* result, char* typename)
 {
     assert(queue->top > 0 && "Queue is empty! Nothing to Pop!");
-    assert(compare_names(queue->typename, typename) && "Stack typenames mismatch");
+    assert(queue->hash == hash_djb2(typename) && "Queue typenames mismatch");
     memcpy(result, queue->elements, queue->size_per_element);
     queue->top--;
     if (queue->top > 0)
@@ -71,7 +70,8 @@ uint16_t _queue_size(const queue* const queue)
 
 void _queue_resize(queue** queue, uint16_t capacity)
 {   
-    struct queue* new_queue = _queue_construct(capacity, (*queue)->size_per_element, (*queue)->typename);
+    struct queue* new_queue = _queue_construct(capacity, (*queue)->size_per_element, NULL);
+    new_queue->hash = (*queue)->hash;
     memcpy(new_queue->elements, (*queue)->elements, (*queue)->size_per_element * capacity);
     _queue_destroy(queue);
     *queue = new_queue;
@@ -81,55 +81,6 @@ void _queue_resize(queue** queue, uint16_t capacity)
 void _queue_peek(queue* queue, void* result, char* typename)
 {
     assert(queue->top > 0 && "Queue is empty! Nothing to peek!");
-    assert(compare_names(queue->typename, typename) && "Stack typenames mismatch");
+    assert(queue->hash == hash_djb2(typename) && "Queue typenames mismatch");
     memcpy(result, queue->elements, queue->size_per_element);
-}
-
-
-bool compare_names(const char* left, const char* right)
-{
-    if (left == right)
-    {
-        // same memory 
-        return true;
-    }
-    // compares character per character, ignoring whitespaces ...
-    // "operator*"" vs "operator *" are equal, cause they are handling the same data type.
-    while(true)
-    {
-        if (((*left) && !(*right)) || (!(*left) && (*right)))
-        {
-            return false;
-        }
-
-        if ((*left) == (*right))
-        {
-            if ((*left) == 0)
-            {
-                // reached the end of the string
-                // strings are equals
-                return true;
-            }
-            left++;
-            right++;
-            continue;
-        }
-
-        if ((*left) == ' ')
-        {
-            left++;
-            continue;
-        }
-        if ((*right) == ' ')
-        {
-            right++;
-            continue;
-        } 
-
-        if ((*left) != (*right))
-        {
-            return false;
-        }
-    }
-    return true;
 }
