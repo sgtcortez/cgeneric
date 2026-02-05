@@ -68,7 +68,7 @@ uint16_t _stack_size(const stack* const stack)
 void _stack_resize(stack** stack, uint16_t capacity)
 {   
     struct stack* new_stack = _stack_construct(capacity, (*stack)->size_per_element, (*stack)->typename);
-    memcpy(new_stack->elements, (*stack)->elements, (*stack)->size_per_element * (*stack)->top);
+    memcpy(new_stack->elements, (*stack)->elements, (*stack)->size_per_element * capacity);
     _stack_destroy(stack);
     *stack = new_stack;
 }

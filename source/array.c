@@ -54,7 +54,7 @@ void _array_destroy(array** ar)
 void _array_resize(array** ar, uint16_t capacity)
 {
     array* new_array = _array_construct(capacity, (*ar)->size_per_element);
-    memcpy(new_array->elements, (*ar)->elements, (*ar)->size_per_element * (*ar)->capacity);
+    memcpy(new_array->elements, (*ar)->elements, (*ar)->size_per_element * capacity);
     _array_destroy(ar);
     *ar = new_array;
 }

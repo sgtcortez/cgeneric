@@ -72,7 +72,7 @@ uint16_t _queue_size(const queue* const queue)
 void _queue_resize(queue** queue, uint16_t capacity)
 {   
     struct queue* new_queue = _queue_construct(capacity, (*queue)->size_per_element, (*queue)->typename);
-    memcpy(new_queue->elements, (*queue)->elements, (*queue)->size_per_element * (*queue)->top);
+    memcpy(new_queue->elements, (*queue)->elements, (*queue)->size_per_element * capacity);
     _queue_destroy(queue);
     *queue = new_queue;
 }
