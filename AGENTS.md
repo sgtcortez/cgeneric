@@ -2,23 +2,30 @@
 
 ## Build Commands
 
-This project uses a Makefile-based build system.
+This project uses a Makefile-based build system with GCC.
 
 ### Core Commands
 - `make` or `make all` - Build all libraries (static and shared)
 - `make clean` - Remove all build artifacts
 - `make -j$(nproc)` - Parallel build using all available cores
+- `make <target>` - Build specific target (e.g., `make .build/libarray.a`)
 
 ### Build Outputs
 - Static library: `.build/libcgeneric.a`
 - Shared library: `.build/libcgeneric.so`
 - Individual module libraries: `.build/lib{module}.a` and `.build/lib{module}.so`
+- Object files: `.build/*.o`
+
+### Linting & Compilation
+- Compiler flags: `-Wall -Wextra -Werror -g3 -std=gnu11`
+- To check a single file: `gcc -Iinclude -Wall -Wextra -Werror -std=gnu11 -c source/array.c -o /tmp/test.o`
+- To build with debug info: `make clean && make`
+- Compile flags file: `compile_flags.txt` (used by clangd and other tools)
 
 ### Testing
-This project currently has no formal test suite. To test manually:
-1. Include the relevant headers from `include/cgeneric/`
-2. Link against the built libraries from `.build/`
-3. Create test programs and compile with `-I./include -L./build -lcgeneric`
+This project has no formal test suite. The `tests/` directory exists but is empty.
+- Manual testing: Include headers from `include/cgeneric/`, link against `.build/`
+- Compile test program: `gcc -I./include -L./build -o test test_program.c -lcgeneric`
 
 ## Code Style Guidelines
 
@@ -26,6 +33,7 @@ This project currently has no formal test suite. To test manually:
 - Language: C11 (GNU11 standard)
 - Compiler: GCC with strict warnings (`-Wall -Wextra -Werror`)
 - Build directory: `.build/` (all artifacts go here)
+- Use `-Wno-gnu-statement-expression` to allow statement expressions in macros
 
 ### Import Organization
 Headers are organized in this order:
@@ -54,7 +62,7 @@ Headers are organized in this order:
 ### Types and Sizes
 - Use fixed-width types from `stdint.h` for binary compatibility:
   - `uint8_t` for element sizes
-  - `uint16_t` for capacities and indices  
+  - `uint16_t` for capacities and indices
   - `uint32_t` for hash keys
 - Use `size_t` for memory allocations and array calculations
 - Use `bool` from `stdbool.h` for boolean returns
@@ -87,6 +95,13 @@ Two-phase initialization:
 - Wrap macro bodies in `({...})` statement expressions
 - Use stringification `#` to capture type names for runtime checking
 - Example: `#define STACK_PUSH(stack, type, value) ({typeof(value) tmp = (value); _stack_push(stack, &tmp, #type);})`
+
+### Code Formatting
+- Indentation: 4 spaces (no tabs)
+- Braces: Opening brace on same line as control statement
+- Line length: No hard limit, but prefer readable wrapping
+- No comments on closing braces
+- Use empty lines to separate logical sections within functions
 
 ### Documentation
 - Use C-style `/** */` comments for function documentation
@@ -123,12 +138,28 @@ Two-phase initialization:
 All containers follow this layout:
 ```c
 struct container {
-    // metadata fields
     uint8_t size_per_element;
     uint16_t capacity;
     // other fields...
     char elements[]; // flexible array member
 };
 ```
+This enables single allocation for both metadata and elements, improving cache locality.
 
-This enables single allocation for both metadata and elements, improving cache locality and reducing allocation overhead.
+### Project Structure
+```
+cgeneric/
+├── source/          # Implementation files (*.c)
+├── include/cgeneric/ # Public headers (*.h)
+├── tests/           # Test files (currently empty)
+├── .build/          # Build artifacts
+├── Makefile         # Build system
+└── compile_flags.txt # Clangd/LSP compiler flags
+```
+
+### Available Modules
+- array - Dynamic array container
+- stack - Stack data structure
+- queue - Queue data structure
+- hashtable - Hash table with separate chaining
+- hash - Hash function utilities

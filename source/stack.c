@@ -81,3 +81,12 @@ void _stack_peek(stack* stack, void* result, const char* typename)
     assert(stack->hash == hash_djb2(typename) && "Stack typenames mismatch");
     memcpy(result, stack->elements + ((stack->top - 1) * stack->size_per_element), stack->size_per_element);
 }
+
+void _stack_for_each(stack* stack, void (*callback)(void* data, void* user_data), void* user_data, const char* typename)
+{
+    assert(stack->hash == hash_djb2(typename) && "Stack typenames mismatch");
+    for (uint16_t i = stack->top; i > 0; i--)
+    {
+        callback(stack->elements + ((i - 1) * stack->size_per_element), user_data);
+    }
+}

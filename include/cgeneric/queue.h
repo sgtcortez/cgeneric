@@ -14,6 +14,7 @@ typedef struct queue queue;
 #define QUEUE_SIZE(_QUEUE_QUEUE)_queue_size(_QUEUE_QUEUE)
 #define QUEUE_RESIZE(_QUEUE_QUEUE, _QUEUE_ELEMENTS)_queue_resize(&_QUEUE_QUEUE, _QUEUE_ELEMENTS);
 #define QUEUE_PEEK(_QUEUE_QUEUE, _QUEUE_TYPE)({_QUEUE_TYPE tmp[1] = {0}; _queue_peek(_QUEUE_QUEUE, tmp, #_QUEUE_TYPE); *tmp;}) 
+#define QUEUE_FOREACH(_QUEUE_QUEUE, _QUEUE_TYPE, _CALLBACK, _USER_DATA)({_queue_for_each(_QUEUE_QUEUE, _CALLBACK, _USER_DATA, #_QUEUE_TYPE);}) 
 
 
 /**
@@ -56,7 +57,12 @@ void _queue_resize(queue** queue, uint16_t capacity);
 
 /**
  * Peek the top element
-*/
+ */
 void _queue_peek(queue* queue, void* result, char* typename);
+
+/**
+ * Iterate over all elements in FIFO order
+ */
+void _queue_for_each(queue* queue, void (*callback)(void* data, void* user_data), void* user_data, char* typename);
 
 #endif

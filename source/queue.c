@@ -84,3 +84,12 @@ void _queue_peek(queue* queue, void* result, char* typename)
     assert(queue->hash == hash_djb2(typename) && "Queue typenames mismatch");
     memcpy(result, queue->elements, queue->size_per_element);
 }
+
+void _queue_for_each(queue* queue, void (*callback)(void* data, void* user_data), void* user_data, char* typename)
+{
+    assert(queue->hash == hash_djb2(typename) && "Queue typenames mismatch");
+    for (uint16_t i = 0; i < queue->top; i++)
+    {
+        callback(queue->elements + (i * queue->size_per_element), user_data);
+    }
+}
