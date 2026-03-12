@@ -11,6 +11,21 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 
 set(LIB_PREFIX "cgeneric")
 
+# OS Detection for shared library extension
+if(APPLE)
+    set(SHARED_EXT "dylib")
+elseif(UNIX AND NOT CYGWIN AND NOT ANDROID)
+    if(CMAKE_SYSTEM_NAME MATCHES "Linux|FreeBSD|OpenBSD|NetBSD")
+        set(SHARED_EXT "so")
+    else()
+        set(SHARED_EXT "so")
+    endif()
+else()
+    set(SHARED_EXT "so")
+endif()
+
+set(CMAKE_SHARED_LIBRARY_SUFFIX ".${SHARED_EXT}")
+
 file(GLOB SOURCES "${CMAKE_SOURCE_DIR}/source/*.c")
 
 add_library(${LIB_PREFIX} STATIC ${SOURCES})
