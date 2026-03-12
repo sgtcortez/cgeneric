@@ -3,7 +3,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
-#include <malloc.h>
+#include <stdlib.h>
 
 /**
  * The array implementation does not provide any safe guards. 
